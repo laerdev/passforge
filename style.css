@@ -294,7 +294,7 @@ select:focus-visible, input[type="text"]:focus-visible { outline: 2px solid var(
 .notes h2 { font-size: 1.05rem; margin: 0 0 6px; }
 .notes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 6px 28px; }
 .notes-grid h3 { font-size: .95rem; margin: 14px 0 4px; }
-.notes-grid p { margin: 0; color: var(--text-soft); font-size: .92rem; }
+.notes-grid p { margin: 0; color: var(--text-soft); font-size: .92rem; text-align: justify }
 code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .88em; background: var(--code-bg); padding: 1px 5px; border-radius: 5px; }
 .foot { color: var(--text-faint); font-size: .82rem; margin-top: 26px; }
 .foot p { margin: 0; }
