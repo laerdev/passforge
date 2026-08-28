@@ -100,7 +100,7 @@ body {
 /* Layout */
 .wrap { width: 90%; margin: 0 auto; padding: 8px 0 60px; }
 h1 { font-size: clamp(1.7rem, 3.2vw, 2.5rem); letter-spacing: -.02em; margin: 18px 0 6px; }
-.lede { color: var(--text-soft); margin: 0 0 22px; max-width: 62ch; text-align: justify }
+.lede { color: var(--text-soft); margin: 0 0 22px; max-width: 62ch; }
 
 .card {
   background: var(--card);
