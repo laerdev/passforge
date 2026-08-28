@@ -1,258 +1,227 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Password Forge - Secure Password &amp; Passphrase Generator</title>
-<meta name="description" content="Generate strong random passwords and memorable passphrases in your browser. Nothing is sent anywhere. See exactly how long a brute force attack would take.">
+<title>Passphrase Forge, secure password and passphrase generator</title>
+<meta name="description" content="Generate strong random passwords and word-based passphrases in your browser, with an entropy meter that estimates how long a brute-force attack would take.">
 <meta name="color-scheme" content="light dark">
-<link rel="stylesheet" href="style.css?v=1">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%94%92%3C/text%3E%3C/svg%3E">
-<script>
-  // Applied before paint so a dark-mode visitor never sees a white flash.
-  try {
-    var t = localStorage.getItem('pf-theme');
-    if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t;
-  } catch (e) {}
-</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='26' font-size='26'%3E%F0%9F%94%91%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
-
 <header class="topbar">
   <div class="brand">
     <span class="brand-mark" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="4" y="10.5" width="16" height="10" rx="2.5"></rect>
-        <path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"></path>
-        <circle cx="12" cy="15.5" r="1.4" fill="currentColor" stroke="none"></circle>
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="4" y="10" width="16" height="10" rx="2.5"></rect>
+        <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+        <circle cx="12" cy="15" r="1.4" fill="currentColor" stroke="none"></circle>
       </svg>
     </span>
-    <span class="brand-name">Password Forge</span>
+    <span class="brand-name">Passphrase Forge</span>
   </div>
 
-  <label class="theme-switch" title="Switch between day and night mode">
+  <label class="theme-switch" title="Switch between light and dark mode">
+    <span class="visually-hidden">Dark mode</span>
     <input type="checkbox" id="themeToggle">
     <span class="theme-track">
       <span class="theme-icon theme-sun" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
           <circle cx="12" cy="12" r="4.2"></circle>
-          <path d="M12 2v2.2M12 19.8V22M2 12h2.2M19.8 12H22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M19.1 4.9l-1.6 1.6M6.5 17.5l-1.6 1.6"></path>
+          <path d="M12 2.4v2.2M12 19.4v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.4 12h2.2M19.4 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"></path>
         </svg>
       </span>
       <span class="theme-icon theme-moon" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M20 14.5A8.2 8.2 0 0 1 9.5 4a8.4 8.4 0 1 0 10.5 10.5z"></path>
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 14.2A8.2 8.2 0 0 1 9.8 4 8.4 8.4 0 1 0 20 14.2z"></path>
         </svg>
       </span>
-      <span class="theme-thumb"></span>
+      <span class="theme-thumb" aria-hidden="true"></span>
     </span>
-    <span class="sr-only">Night mode</span>
   </label>
 </header>
 
 <main class="wrap">
+  <h1>Make a password worth trusting</h1>
+  <p class="lede">Everything happens inside your browser, using the operating system's cryptographic random number generator. Nothing is sent anywhere, nothing is stored.</p>
 
-  <section class="intro">
-    <h1>Make a password worth trusting</h1>
-    <p>Everything happens inside your browser using your device's cryptographic random number generator. No password is ever sent over the network, stored, or logged.</p>
-  </section>
-
-  <!-- OUTPUT -->
-  <section class="card output-card" aria-labelledby="outLabel">
-    <h2 id="outLabel" class="sr-only">Your generated password</h2>
-    <output class="password" id="password" aria-live="polite"><span class="pw-inner" id="pwInner">&nbsp;</span></output>
+  <section class="card output-card" aria-label="Generated password">
+    <div class="output" id="output" tabindex="0" aria-live="polite"></div>
     <div class="output-actions">
-      <button type="button" class="btn btn-primary" id="copyBtn">
-        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <button class="btn btn-primary" id="regenerate" type="button">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M20 11a8 8 0 0 0-13.6-4.9L3 9"></path><path d="M3 4v5h5"></path>
+          <path d="M4 13a8 8 0 0 0 13.6 4.9L21 15"></path><path d="M21 20v-5h-5"></path>
+        </svg>
+        New password
+      </button>
+      <button class="btn btn-copy" id="copy" type="button">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <rect x="9" y="9" width="11" height="11" rx="2.2"></rect>
-          <path d="M5 15V6a2 2 0 0 1 2-2h9"></path>
+          <path d="M5 15V5.5A1.5 1.5 0 0 1 6.5 4H15"></path>
         </svg>
-        <span id="copyLabel">Copy password</span>
+        <span id="copyLabel">Copy</span>
       </button>
-      <button type="button" class="btn btn-ghost" id="regenBtn">
-        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M20 12a8 8 0 1 1-2.6-5.9"></path><path d="M20 4v4.4h-4.4"></path>
-        </svg>
-        <span>Generate another</span>
-      </button>
+      <span class="copy-status" id="copyStatus" role="status"></span>
     </div>
   </section>
 
-  <!-- STRENGTH -->
-  <section class="card meter-card" aria-labelledby="meterLabel">
-    <div class="meter-head">
-      <h2 id="meterLabel">Strength</h2>
-      <span class="verdict" id="verdict">Strong</span>
-    </div>
-    <div class="meter" role="img" aria-label="Password strength meter" id="meterWrap">
-      <div class="meter-fill" id="meterFill"></div>
-    </div>
-    <div class="stats">
-      <div class="stat">
-        <span class="stat-value" id="bits">0</span>
-        <span class="stat-label">bits of entropy</span>
-      </div>
-      <div class="stat">
-        <span class="stat-value" id="combos">0</span>
-        <span class="stat-label">possible passwords</span>
-      </div>
-      <div class="stat stat-wide">
-        <span class="stat-value" id="crackTime">instantly</span>
-        <span class="stat-label">average time to brute force</span>
-      </div>
-    </div>
-    <div class="attacker">
-      <label for="attacker">Attacker assumed:</label>
-      <select id="attacker">
-        <option value="1e2">Online login form, throttled (100 guesses/sec)</option>
-        <option value="1e4">Online attack, no throttling (10 thousand/sec)</option>
-        <option value="1e9">Stolen database, slow hash such as bcrypt (1 billion/sec)</option>
-        <option value="1e11" selected>Stolen database, fast hash on a GPU rig (100 billion/sec)</option>
-        <option value="1e15">Very well funded attacker (1 quadrillion/sec)</option>
-      </select>
-    </div>
-    <p class="note" id="entropyNote"></p>
-  </section>
-
-  <!-- MODE -->
-  <section class="card">
-    <h2 class="card-title">What kind of password?</h2>
-    <div class="segment" role="radiogroup" aria-label="Password type">
-      <input type="radio" name="mode" id="modeChars" value="chars" checked>
-      <label for="modeChars">Random characters</label>
-      <input type="radio" name="mode" id="modeWords" value="words">
-      <label for="modeWords">Word phrase</label>
-      <span class="segment-thumb" aria-hidden="true"></span>
-    </div>
-
-    <!-- CHARACTERS PANEL -->
-    <div class="panel" id="panelChars">
-      <div class="range-row">
-        <label for="charLen">Length</label>
-        <span class="range-value" id="charLenValue">20</span>
-      </div>
-      <input type="range" id="charLen" min="6" max="64" value="20" step="1" class="range">
-
-      <div class="switches">
-        <label class="switch-row">
-          <span class="switch-text">
-            <span class="switch-title">Lowercase letters</span>
-            <span class="switch-sub">a b c ... z</span>
-          </span>
-          <input type="checkbox" id="optLower" class="switch-input" checked>
-          <span class="switch" aria-hidden="true"></span>
-        </label>
-        <label class="switch-row">
-          <span class="switch-text">
-            <span class="switch-title">Uppercase letters</span>
-            <span class="switch-sub">A B C ... Z</span>
-          </span>
-          <input type="checkbox" id="optUpper" class="switch-input" checked>
-          <span class="switch" aria-hidden="true"></span>
-        </label>
-        <label class="switch-row">
-          <span class="switch-text">
-            <span class="switch-title">Add numbers</span>
-            <span class="switch-sub">0 1 2 ... 9</span>
-          </span>
-          <input type="checkbox" id="optDigits" class="switch-input" checked>
-          <span class="switch" aria-hidden="true"></span>
-        </label>
-        <label class="switch-row">
-          <span class="switch-text">
-            <span class="switch-title">Symbols</span>
-            <span class="switch-sub">! @ # $ % &amp; ...</span>
-          </span>
-          <input type="checkbox" id="optSymbols" class="switch-input" checked>
-          <span class="switch" aria-hidden="true"></span>
-        </label>
-        <label class="switch-row">
-          <span class="switch-text">
-            <span class="switch-title">Avoid look-alike characters</span>
-            <span class="switch-sub">Leaves out I l 1 O 0 and friends</span>
-          </span>
-          <input type="checkbox" id="optNoAmbiguous" class="switch-input">
-          <span class="switch" aria-hidden="true"></span>
-        </label>
-      </div>
-      <p class="warn" id="charWarn" hidden>Turn at least one character set on.</p>
-    </div>
-
-    <!-- WORDS PANEL -->
-    <div class="panel" id="panelWords" hidden>
-      <div class="range-row">
-        <label for="wordCount">Words</label>
-        <span class="range-value" id="wordCountValue">7</span>
-      </div>
-      <input type="range" id="wordCount" min="3" max="12" value="7" step="1" class="range">
-
-      <div class="switches">
-        <label class="switch-row">
-          <span class="switch-text">
-            <span class="switch-title">Add numbers</span>
-            <span class="switch-sub">Puts a random digit on the end of every word</span>
-          </span>
-          <input type="checkbox" id="wOptDigits" class="switch-input">
-          <span class="switch" aria-hidden="true"></span>
-        </label>
-        <label class="switch-row">
-          <span class="switch-text">
-            <span class="switch-title">Capitalise each word</span>
-            <span class="switch-sub">Easier to read, adds no extra entropy</span>
-          </span>
-          <input type="checkbox" id="wOptCaps" class="switch-input">
-          <span class="switch" aria-hidden="true"></span>
-        </label>
+  <div class="columns">
+    <section class="card" aria-label="Settings">
+      <div class="tabs" role="tablist" aria-label="Password type">
+        <button class="tab is-active" id="tab-phrase" role="tab" aria-selected="true" aria-controls="panel-phrase" type="button">Passphrase</button>
+        <button class="tab" id="tab-random" role="tab" aria-selected="false" aria-controls="panel-random" type="button">Random characters</button>
       </div>
 
-      <div class="sep-block">
-        <span class="switch-title">Spacing character</span>
-        <div class="segment segment-5" role="radiogroup" aria-label="Spacing character">
-          <input type="radio" name="sep" id="sepSpace" value=" " checked>
-          <label for="sepSpace"><span class="sep-glyph">␣</span><span class="sep-name">space</span></label>
-          <input type="radio" name="sep" id="sepDash" value="-">
-          <label for="sepDash"><span class="sep-glyph">-</span><span class="sep-name">hyphen</span></label>
-          <input type="radio" name="sep" id="sepDot" value=".">
-          <label for="sepDot"><span class="sep-glyph">.</span><span class="sep-name">dot</span></label>
-          <input type="radio" name="sep" id="sepUnder" value="_">
-          <label for="sepUnder"><span class="sep-glyph">_</span><span class="sep-name">underscore</span></label>
-          <input type="radio" name="sep" id="sepNone" value="">
-          <label for="sepNone"><span class="sep-glyph">&#8709;</span><span class="sep-name">none</span></label>
-          <span class="segment-thumb" aria-hidden="true"></span>
+      <div class="panel" id="panel-phrase" role="tabpanel" aria-labelledby="tab-phrase">
+        <div class="field">
+          <div class="field-head">
+            <label for="wordCount">Words</label>
+            <output class="value-pill" id="wordCountValue">3</output>
+          </div>
+          <input type="range" id="wordCount" min="3" max="12" step="1" value="3">
+          <p class="hint">Three words is the minimum here. Each extra word roughly multiplies the work an attacker faces by 7,776.</p>
+        </div>
+
+        <div class="field">
+          <div class="field-head">
+            <label for="separator">Spacing character</label>
+          </div>
+          <div class="sep-row" id="separator" role="group" aria-label="Spacing character">
+            <button type="button" class="sep-btn" data-sep="-" aria-pressed="true" title="Hyphen">-</button>
+            <button type="button" class="sep-btn" data-sep="." aria-pressed="false" title="Period">.</button>
+            <button type="button" class="sep-btn" data-sep="_" aria-pressed="false" title="Underscore">_</button>
+            <button type="button" class="sep-btn" data-sep="+" aria-pressed="false" title="Plus">+</button>
+            <button type="button" class="sep-btn" data-sep="/" aria-pressed="false" title="Slash">/</button>
+            <button type="button" class="sep-btn" data-sep=" " aria-pressed="false" title="Space">Space</button>
+            <button type="button" class="sep-btn" data-sep="" aria-pressed="false" title="No spacing character">None</button>
+            <button type="button" class="sep-btn" data-sep="custom" aria-pressed="false" title="Type your own character">Own</button>
+            <input type="text" id="separatorCustom" class="sep-custom is-idle" maxlength="1" placeholder="?" aria-label="Custom spacing character">
+          </div>
+          <p class="hint" id="sepHint">Hyphen keeps the words readable and works in almost every password field.</p>
+        </div>
+
+        <div class="switches">
+          <label class="switch-row">
+            <span class="switch-text"><span class="switch-title">Add numbers</span><span class="switch-sub">Puts a random two digit number in the mix</span></span>
+            <input type="checkbox" id="phraseNumbers" class="switch-input" checked>
+            <span class="switch" aria-hidden="true"></span>
+          </label>
+          <label class="switch-row">
+            <span class="switch-text"><span class="switch-title">Capitalise words</span><span class="switch-sub">Word becomes Word</span></span>
+            <input type="checkbox" id="phraseCaps" class="switch-input">
+            <span class="switch" aria-hidden="true"></span>
+          </label>
+          <label class="switch-row">
+            <span class="switch-text"><span class="switch-title">Add a symbol</span><span class="switch-sub">Appends one punctuation character</span></span>
+            <input type="checkbox" id="phraseSymbol" class="switch-input">
+            <span class="switch" aria-hidden="true"></span>
+          </label>
         </div>
       </div>
-      <p class="note" id="wordNote"></p>
-    </div>
-  </section>
 
-  <section class="card guide">
-    <h2 class="card-title">How to read the numbers</h2>
-    <div class="guide-grid">
+      <div class="panel" id="panel-random" role="tabpanel" aria-labelledby="tab-random" hidden>
+        <div class="field">
+          <div class="field-head">
+            <label for="length">Length</label>
+            <output class="value-pill" id="lengthValue">20</output>
+          </div>
+          <input type="range" id="length" min="6" max="64" step="1" value="20">
+        </div>
+
+        <div class="switches">
+          <label class="switch-row">
+            <span class="switch-text"><span class="switch-title">Lowercase</span><span class="switch-sub">a to z</span></span>
+            <input type="checkbox" id="optLower" class="switch-input" checked>
+            <span class="switch" aria-hidden="true"></span>
+          </label>
+          <label class="switch-row">
+            <span class="switch-text"><span class="switch-title">Uppercase</span><span class="switch-sub">A to Z</span></span>
+            <input type="checkbox" id="optUpper" class="switch-input" checked>
+            <span class="switch" aria-hidden="true"></span>
+          </label>
+          <label class="switch-row">
+            <span class="switch-text"><span class="switch-title">Numbers</span><span class="switch-sub">0 to 9</span></span>
+            <input type="checkbox" id="optDigits" class="switch-input" checked>
+            <span class="switch" aria-hidden="true"></span>
+          </label>
+          <label class="switch-row">
+            <span class="switch-text"><span class="switch-title">Symbols</span><span class="switch-sub">!@#$%&amp;*, and friends</span></span>
+            <input type="checkbox" id="optSymbols" class="switch-input" checked>
+            <span class="switch" aria-hidden="true"></span>
+          </label>
+          <label class="switch-row">
+            <span class="switch-text"><span class="switch-title">Avoid look-alikes</span><span class="switch-sub">Drops 0 O 1 l I | and friends</span></span>
+            <input type="checkbox" id="optAmbiguous" class="switch-input">
+            <span class="switch" aria-hidden="true"></span>
+          </label>
+        </div>
+        <p class="hint" id="poolHint"></p>
+      </div>
+    </section>
+
+    <section class="card meter-card" aria-label="Strength">
+      <div class="meter-head">
+        <h2>Entropy</h2>
+        <span class="strength-tag" id="strengthTag">Strong</span>
+      </div>
+      <div class="entropy-figure">
+        <span class="entropy-number" id="entropyBits">0</span>
+        <span class="entropy-unit">bits</span>
+      </div>
+      <div class="meter" role="img" id="meter" aria-label="Strength meter">
+        <div class="meter-fill" id="meterFill"></div>
+      </div>
+      <ul class="meter-scale" aria-hidden="true">
+        <li>0</li><li>40</li><li>80</li><li>120</li><li>160+</li>
+      </ul>
+      <p class="entropy-note" id="entropyNote"></p>
+      <p class="advice" id="advice"></p>
+
+      <h3 class="crack-title">Time to brute force</h3>
+      <dl class="crack-list">
+        <div class="crack-row">
+          <dt>Online attack, throttled<span>100 guesses per second</span></dt>
+          <dd id="crackOnline">-</dd>
+        </div>
+        <div class="crack-row">
+          <dt>Leaked database, slow hash<span>10 thousand million guesses per second</span></dt>
+          <dd id="crackOffline">-</dd>
+        </div>
+        <div class="crack-row">
+          <dt>Serious attacker, fast hardware<span>100 million million guesses per second</span></dt>
+          <dd id="crackFast">-</dd>
+        </div>
+      </dl>
+      <p class="hint">Figures assume the attacker knows exactly how the password was made and has to search half the possible combinations on average.</p>
+    </section>
+  </div>
+
+  <section class="card notes">
+    <h2>How this works</h2>
+    <div class="notes-grid">
       <div>
-        <h3>Entropy</h3>
-        <p>Entropy in bits measures how many guesses an attacker has to work through. Each extra bit doubles the work. Under 60 bits is weak for anything important, 80 bits is comfortable, and above 100 bits is out of reach of any attacker we know how to build.</p>
+        <h3>Real randomness</h3>
+        <p>Characters and words are drawn with <code>crypto.getRandomValues</code> and rejection sampling, so every option is equally likely. No shortcuts, no seeded pseudo-randomness.</p>
       </div>
       <div>
-        <h3>Brute force time</h3>
-        <p>The time shown is the average: half the search space, at the guessing rate you picked. Real attackers try common words, dates and substitutions first, which is why a password from a random generator beats one you invented yourself.</p>
+        <h3>The word list</h3>
+        <p>Passphrases use the EFF long word list: 7,776 distinct English words, each one worth 12.9 bits. A three word phrase is far easier to remember than a random string of the same strength.</p>
       </div>
       <div>
-        <h3>Characters or words?</h3>
-        <p>Random characters pack the most entropy into the fewest keystrokes, so they are ideal for anything a password manager types for you. A word phrase reaches the same strength with more length, and you can actually remember it, which makes it the better choice for the handful of passwords you type by hand.</p>
-      </div>
-      <div>
-        <h3>Where these come from</h3>
-        <p>Every character and every word is drawn with <code>crypto.getRandomValues</code>, the browser's cryptographic random source, using rejection sampling so that no value is more likely than any other. The page has no analytics and no backend.</p>
+        <h3>Nothing leaves this page</h3>
+        <p>There is no server-side generator, no analytics and no logging. Close the tab and the password is gone, so save it in a password manager before you leave.</p>
       </div>
     </div>
   </section>
 
   <footer class="foot">
-    <p>Password Forge. Generated in your browser, never transmitted. Close the tab and it is gone.</p>
+    <p>Word list: EFF long list, CC BY 3.0 US, Electronic Frontier Foundation.</p>
   </footer>
 </main>
 
-<script src="words.js?v=1"></script>
-<script src="app.js?v=1"></script>
+<script src="words.js?v=3"></script>
+<script src="app.js?v=3"></script>
 </body>
 </html>
